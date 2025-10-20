@@ -112,26 +112,150 @@
 
   &__content {
     @include card;
-    min-width: 300px;
+    min-width: 400px;
     max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
   }
 
   &__title {
     font-size: $font-size-xl;
-    margin-bottom: $spacing-md;
+    margin-bottom: $spacing-lg;
+    text-align: center;
   }
 
-  &__placeholder {
-    margin-bottom: $spacing-md;
-    color: $color-gray-medium;
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
   }
 
-  &__close {
+  &__actions {
+    display: flex;
+    gap: $spacing-sm;
+    margin-top: $spacing-md;
+  }
+
+  &__cancel,
+  &__submit {
     @include button-reset;
-    background: $color-danger;
-    color: $color-white;
+    flex: 1;
     padding: $spacing-sm $spacing-md;
     border-radius: $border-radius-md;
-    width: 100%;
+    font-weight: bold;
+    transition: background $transition-base;
+  }
+
+  &__cancel {
+    background: $color-gray-dark;
+    color: $color-white;
+
+    &:hover:not(:disabled) {
+      background: lighten($color-gray-dark, 10%);
+    }
+  }
+
+  &__submit {
+    background: $color-primary;
+    color: $color-white;
+
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 10%);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.form {
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+
+  &__label {
+    font-weight: bold;
+    font-size: $font-size-sm;
+    color: $color-gray-light;
+  }
+
+  &__input {
+    @include input-reset;
+    background: $color-gray-dark;
+    color: $color-white;
+    padding: $spacing-sm;
+    border-radius: $border-radius-sm;
+    border: 1px solid $color-gray-medium;
+    transition: border-color $transition-base;
+
+    &:focus {
+      border-color: $color-primary;
+      outline: none;
+    }
+
+    &::placeholder {
+      color: $color-gray-medium;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__radio-group {
+    display: flex;
+    gap: $spacing-md;
+  }
+
+  &__radio {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    cursor: pointer;
+
+    input[type='radio'] {
+      cursor: pointer;
+    }
+
+    span {
+      font-size: $font-size-sm;
+    }
+
+    &:hover span {
+      color: $color-primary;
+    }
+  }
+
+  &__checkbox {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    cursor: pointer;
+
+    input[type='checkbox'] {
+      cursor: pointer;
+    }
+
+    span {
+      font-size: $font-size-sm;
+    }
+
+    &:hover span {
+      color: $color-primary;
+    }
+  }
+
+  &__error {
+    color: $color-danger;
+    font-size: $font-size-sm;
+    text-align: center;
+    padding: $spacing-sm;
+    background: rgba($color-danger, 0.1);
+    border-radius: $border-radius-sm;
   }
 }

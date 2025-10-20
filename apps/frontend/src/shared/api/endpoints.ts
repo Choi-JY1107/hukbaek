@@ -1,6 +1,6 @@
-import { http } from './http.js';
-import { RoomInfo } from '@shared/types/room.js';
-import { RoomFormat } from '@shared/types/game.js';
+import { http } from './http';
+import { RoomInfo } from '@shared/types/room';
+import { RoomFormat } from '@shared/types/game';
 
 export type CreateRoomRequest = {
   title: string;

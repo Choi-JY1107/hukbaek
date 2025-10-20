@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { useAppStore } from '../store.js';
-import { onMessage } from '../ws.js';
+import { useAppStore } from '../store';
+import { onMessage } from '../ws';
 
 export const WithWebSocket: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { setView, updateGameTurn, updateScore, setGame } = useAppStore();

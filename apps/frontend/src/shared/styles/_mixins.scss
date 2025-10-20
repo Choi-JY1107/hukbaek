@@ -21,6 +21,14 @@
   outline: none;
 }
 
+@mixin input-reset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  outline: none;
+}
+
 @mixin card {
   background: $color-bg-card;
   border-radius: $border-radius-md;

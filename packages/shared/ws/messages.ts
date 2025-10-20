@@ -1,4 +1,4 @@
-import { Tile, MatchResult } from '../types/game.js';
+import { Tile, MatchResult } from '../types/game';
 
 export type WsClientToServer =
   | { t: 'set_ready'; roomId: string; ready: boolean }

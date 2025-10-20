@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useAppStore } from '../../app/store.js';
-import { sendMessage, onMessage } from '../../app/ws.js';
-import { Tile } from '@shared/types/game.js';
+import { useAppStore } from '../../app/store';
+import { sendMessage, onMessage } from '../../app/ws';
+import { Tile } from '@shared/types/game';
 import s from './GamePage.module.scss';
 
 export const GamePage: React.FC = () => {

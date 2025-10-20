@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Tile } from '@shared/types/game.js';
+import { Tile } from '@shared/types/game';
 
 export type ViewType = 'lobby' | 'room' | 'game';
 

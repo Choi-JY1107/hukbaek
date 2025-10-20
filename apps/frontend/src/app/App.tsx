@@ -1,5 +1,5 @@
-import { WithWebSocket } from './providers/WithWebSocket.js';
-import { Routes } from './routes.js';
+import { WithWebSocket } from './providers/WithWebSocket';
+import { Routes } from './routes';
 import './styles/app.scss';
 
 export const App: React.FC = () => {

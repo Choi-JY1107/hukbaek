@@ -2,7 +2,7 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { GameRepository } from './game.repo';
 import { RoomRepository } from '../room/room.repo';
 import { Tile, RoomFormat } from '@shared/types/types/game';
-import { BLACK_TILES, WHITE_TILES } from '@shared/types/constants';
+import { BLACK_TILES, WHITE_TILES } from '@shared/types/dist/constants';
 import * as dealer from './dealer/dealer';
 
 type GameState = {

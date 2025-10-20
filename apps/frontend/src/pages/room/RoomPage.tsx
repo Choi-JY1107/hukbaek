@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useAppStore } from '../../app/store.js';
-import { sendMessage, onMessage } from '../../app/ws.js';
+import { useAppStore } from '../../app/store';
+import { sendMessage, onMessage } from '../../app/ws';
 import s from './RoomPage.module.scss';
 
 export const RoomPage: React.FC = () => {

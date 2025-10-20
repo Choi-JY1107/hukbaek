@@ -1,4 +1,4 @@
-import { ENV } from '../config/env.js';
+import { ENV } from '../config/env';
 
 export const http = {
   async get<T>(path: string): Promise<T> {
