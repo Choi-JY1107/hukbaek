@@ -1,0 +1,137 @@
+@import '../../shared/styles/variables';
+@import '../../shared/styles/mixins';
+
+.lobby {
+  @include flex-column;
+  height: 100%;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: $spacing-md;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-lg;
+  }
+
+  &__title {
+    font-size: $font-size-xxl;
+    font-weight: bold;
+  }
+
+  &__create-btn {
+    @include button-reset;
+    background: $color-primary;
+    color: $color-white;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $border-radius-md;
+    font-weight: bold;
+    transition: background $transition-base;
+
+    &:hover {
+      background: darken($color-primary, 10%);
+    }
+  }
+
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  &__empty {
+    @include flex-center;
+    height: 100%;
+    color: $color-gray-medium;
+    text-align: center;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  &__card {
+    @include card;
+    cursor: pointer;
+    transition: transform $transition-fast, box-shadow $transition-fast;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    &--locked {
+      border: 1px solid $color-gray-medium;
+    }
+  }
+
+  &__card-title {
+    font-size: $font-size-lg;
+    font-weight: bold;
+    margin-bottom: $spacing-xs;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+  }
+
+  &__lock-icon {
+    font-size: $font-size-base;
+  }
+
+  &__card-info {
+    display: flex;
+    gap: $spacing-sm;
+    font-size: $font-size-sm;
+    color: $color-gray-light;
+  }
+
+  &__format {
+    font-weight: bold;
+    color: $color-primary;
+  }
+
+  &__overtime {
+    color: $color-success;
+  }
+
+  &__players {
+    margin-left: auto;
+    font-weight: bold;
+  }
+}
+
+.modal {
+  @include flex-center;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: $z-modal;
+
+  &__content {
+    @include card;
+    min-width: 300px;
+    max-width: 90%;
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    margin-bottom: $spacing-md;
+  }
+
+  &__placeholder {
+    margin-bottom: $spacing-md;
+    color: $color-gray-medium;
+  }
+
+  &__close {
+    @include button-reset;
+    background: $color-danger;
+    color: $color-white;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $border-radius-md;
+    width: 100%;
+  }
+}

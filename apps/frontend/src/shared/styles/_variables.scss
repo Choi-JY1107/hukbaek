@@ -1,0 +1,39 @@
+// Colors
+$color-black: #000000;
+$color-white: #ffffff;
+$color-gray-dark: #333333;
+$color-gray-medium: #666666;
+$color-gray-light: #cccccc;
+$color-bg: #1a1a1a;
+$color-bg-card: #2a2a2a;
+$color-primary: #4a90e2;
+$color-danger: #e74c3c;
+$color-success: #2ecc71;
+
+// Spacing
+$spacing-xs: 0.5rem;
+$spacing-sm: 1rem;
+$spacing-md: 1.5rem;
+$spacing-lg: 2rem;
+$spacing-xl: 3rem;
+
+// Typography
+$font-size-sm: 0.875rem;
+$font-size-base: 1rem;
+$font-size-lg: 1.25rem;
+$font-size-xl: 1.5rem;
+$font-size-xxl: 2rem;
+
+// Borders
+$border-radius-sm: 0.25rem;
+$border-radius-md: 0.5rem;
+$border-radius-lg: 1rem;
+
+// Transitions
+$transition-fast: 0.15s ease;
+$transition-base: 0.3s ease;
+
+// Z-index
+$z-modal: 1000;
+$z-overlay: 999;
+$z-header: 100;

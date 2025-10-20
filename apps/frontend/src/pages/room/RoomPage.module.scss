@@ -1,0 +1,125 @@
+@import '../../shared/styles/variables';
+@import '../../shared/styles/mixins';
+
+.room {
+  @include flex-column;
+  height: 100%;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: $spacing-md;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+  }
+
+  &__back-btn {
+    @include button-reset;
+    color: $color-gray-light;
+    font-size: $font-size-base;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $color-white;
+    }
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: bold;
+  }
+
+  &__content {
+    @include flex-column;
+    flex: 1;
+    gap: $spacing-lg;
+  }
+
+  &__info {
+    @include card;
+    display: flex;
+    gap: $spacing-md;
+    align-items: center;
+    font-size: $font-size-sm;
+  }
+
+  &__format {
+    font-weight: bold;
+    color: $color-primary;
+  }
+
+  &__overtime {
+    color: $color-success;
+  }
+
+  &__players {
+    margin-left: auto;
+    font-weight: bold;
+  }
+
+  &__seats {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  &__ready-btn {
+    @include button-reset;
+    background: $color-primary;
+    color: $color-white;
+    padding: $spacing-md;
+    border-radius: $border-radius-md;
+    font-size: $font-size-lg;
+    font-weight: bold;
+    transition: background $transition-base;
+    margin-top: auto;
+
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 10%);
+    }
+
+    &:disabled {
+      background: $color-gray-medium;
+      cursor: not-allowed;
+    }
+
+    &--ready {
+      background: $color-danger;
+
+      &:hover {
+        background: darken($color-danger, 10%);
+      }
+    }
+  }
+}
+
+.seat {
+  @include card;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+
+  &--empty {
+    opacity: 0.5;
+    border: 2px dashed $color-gray-medium;
+    background: transparent;
+  }
+
+  &--filled {
+    border: 2px solid $color-primary;
+  }
+
+  &__label {
+    font-size: $font-size-lg;
+    font-weight: bold;
+  }
+
+  &__status {
+    font-size: $font-size-sm;
+    color: $color-gray-light;
+  }
+}
