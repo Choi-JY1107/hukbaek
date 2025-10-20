@@ -25,10 +25,19 @@ export class Match {
   format!: RoomFormat;
 
   @Column({ default: 0 })
-  p1Wins!: number;
+  p1Wins!: number; // P1이 이긴 게임 수
 
   @Column({ default: 0 })
-  p2Wins!: number;
+  p2Wins!: number; // P2가 이긴 게임 수
+
+  @Column({ default: 0 })
+  p1CurrentGameWins!: number; // 현재 게임에서 P1이 이긴 라운드 수
+
+  @Column({ default: 0 })
+  p2CurrentGameWins!: number; // 현재 게임에서 P2가 이긴 라운드 수
+
+  @Column({ default: 1 })
+  currentGameNumber!: number; // 현재 진행 중인 게임 번호
 
   @Column({ nullable: true })
   winnerId?: string;

@@ -59,13 +59,18 @@
     cursor: pointer;
     transition: transform $transition-fast, box-shadow $transition-fast;
 
-    &:hover {
+    &:hover:not(&--full) {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
 
     &--locked {
       border: 1px solid $color-gray-medium;
+    }
+
+    &--full {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
   }
 
@@ -80,6 +85,13 @@
 
   &__lock-icon {
     font-size: $font-size-base;
+  }
+
+  &__full-badge {
+    margin-left: auto;
+    font-size: $font-size-sm;
+    color: $color-danger;
+    font-weight: bold;
   }
 
   &__card-info {

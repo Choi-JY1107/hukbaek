@@ -15,7 +15,19 @@ export type CreateRoomResponse = {
   playerId: string;
 };
 
+export type JoinRoomRequest = {
+  roomId: string;
+  nickname: string;
+  password?: string;
+};
+
+export type JoinRoomResponse = {
+  roomId: string;
+  playerId: string;
+};
+
 export const api = {
   getRooms: () => http.get<RoomInfo[]>('/rooms'),
   createRoom: (data: CreateRoomRequest) => http.post<CreateRoomResponse>('/rooms', data),
+  joinRoom: (data: JoinRoomRequest) => http.post<JoinRoomResponse>('/rooms/join', data),
 };

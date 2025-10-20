@@ -3,11 +3,11 @@ import { useAppStore } from '../../app/store';
 import { api, CreateRoomRequest } from '../../shared/api/endpoints';
 import { RoomInfo } from '@shared/types/room';
 import { RoomFormat } from '@shared/types/game';
-import { ROOM_FORMATS } from '@shared/constants/index';
+import { ROOM_FORMATS, FORMAT_LABELS } from '@shared/constants/index';
 import s from './LobbyPage.module.scss';
 
 export const LobbyPage: React.FC = () => {
-  const { setView } = useAppStore();
+  const { setView, setRoom, setMe } = useAppStore();
   const [rooms, setRooms] = useState<RoomInfo[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState<CreateRoomRequest>({
@@ -69,6 +69,24 @@ export const LobbyPage: React.FC = () => {
       };
       const response = await api.createRoom(data);
       console.log('Room created:', response);
+
+      // 방 정보와 플레이어 정보를 store에 저장
+      setRoom({
+        id: response.roomId,
+        title: formData.title,
+        locked: !!formData.password,
+        format: formData.format,
+        overtime: formData.overtime,
+        playerCount: 1,
+      });
+
+      setMe({
+        id: response.playerId,
+        nickname: formData.nickname,
+        ready: false,
+        tilesLeft: [],
+      });
+
       setShowModal(false);
       setView('room');
       await loadRooms();
@@ -79,9 +97,49 @@ export const LobbyPage: React.FC = () => {
     }
   };
 
-  const handleJoinRoom = (roomId: string) => {
-    console.log('Join room:', roomId);
-    setView('room');
+  const handleJoinRoom = async (room: RoomInfo) => {
+    // 2명이 차 있으면 참가 불가
+    if (room.playerCount >= 2) {
+      return;
+    }
+
+    const nickname = prompt('닉네임을 입력하세요');
+    if (!nickname) return;
+
+    let password: string | undefined;
+    if (room.locked) {
+      password = prompt('비밀번호를 입력하세요') || undefined;
+      if (!password) return;
+    }
+
+    try {
+      const response = await api.joinRoom({
+        roomId: room.id,
+        nickname,
+        password,
+      });
+
+      // 방 정보와 플레이어 정보를 store에 저장
+      setRoom({
+        id: room.id,
+        title: room.title,
+        locked: room.locked,
+        format: room.format,
+        overtime: room.overtime,
+        playerCount: room.playerCount,
+      });
+
+      setMe({
+        id: response.playerId,
+        nickname,
+        ready: false,
+        tilesLeft: [],
+      });
+
+      setView('room');
+    } catch (err: any) {
+      alert(err.message || '방 참가에 실패했습니다');
+    }
   };
 
   return (
@@ -98,23 +156,34 @@ export const LobbyPage: React.FC = () => {
           <div className={s['lobby__empty']}>방이 없습니다. 새로운 방을 만들어보세요!</div>
         ) : (
           <ul className={s['lobby__list']}>
-            {rooms.map((room) => (
-              <li
-                key={room.id}
-                className={`${s['lobby__card']} ${room.locked ? s['lobby__card--locked'] : ''}`}
-                onClick={() => handleJoinRoom(room.id)}
-              >
-                <div className={s['lobby__card-title']}>
-                  {room.locked && <span className={s['lobby__lock-icon']}>🔒</span>}
-                  {room.title}
-                </div>
-                <div className={s['lobby__card-info']}>
-                  <span className={s['lobby__format']}>{room.format.toUpperCase()}</span>
-                  {room.overtime && <span className={s['lobby__overtime']}>연장</span>}
-                  <span className={s['lobby__players']}>{room.playerCount}/2</span>
-                </div>
-              </li>
-            ))}
+            {rooms
+              .sort((a, b) => {
+                // 2명 차 있으면 맨 밑으로
+                if (a.playerCount >= 2 && b.playerCount < 2) return 1;
+                if (a.playerCount < 2 && b.playerCount >= 2) return -1;
+                return 0;
+              })
+              .map((room) => (
+                <li
+                  key={room.id}
+                  className={`${s['lobby__card']} ${room.locked ? s['lobby__card--locked'] : ''} ${
+                    room.playerCount >= 2 ? s['lobby__card--full'] : ''
+                  }`}
+                  onClick={() => room.playerCount < 2 && handleJoinRoom(room)}
+                  style={{ cursor: room.playerCount >= 2 ? 'not-allowed' : 'pointer' }}
+                >
+                  <div className={s['lobby__card-title']}>
+                    {room.locked && <span className={s['lobby__lock-icon']}>🔒</span>}
+                    {room.title}
+                    {room.playerCount >= 2 && <span className={s['lobby__full-badge']}>만석</span>}
+                  </div>
+                  <div className={s['lobby__card-info']}>
+                    <span className={s['lobby__format']}>{FORMAT_LABELS[room.format]}</span>
+                    {room.overtime && <span className={s['lobby__overtime']}>연장</span>}
+                    <span className={s['lobby__players']}>{room.playerCount}/2</span>
+                  </div>
+                </li>
+              ))}
           </ul>
         )}
       </div>
@@ -177,7 +246,7 @@ export const LobbyPage: React.FC = () => {
                         onChange={(e) => setFormData({ ...formData, format: e.target.value as RoomFormat })}
                         disabled={isLoading}
                       />
-                      <span>{format.toUpperCase()}</span>
+                      <span>{FORMAT_LABELS[format]}</span>
                     </label>
                   ))}
                 </div>

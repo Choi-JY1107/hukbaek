@@ -8,119 +8,181 @@
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
-  padding: $spacing-md;
+  padding: $spacing-sm;
+  overflow-y: auto;
+
+  &__empty {
+    @include flex-center;
+    height: 100%;
+    color: $color-gray-medium;
+  }
 
   &__header {
     display: flex;
-    align-items: center;
-    gap: $spacing-md;
-    margin-bottom: $spacing-lg;
+    flex-direction: column;
+    gap: $spacing-xs;
+    margin-bottom: $spacing-sm;
+    padding-bottom: $spacing-sm;
+    border-bottom: 1px solid $color-gray-dark;
   }
 
   &__back-btn {
     @include button-reset;
-    color: $color-gray-light;
-    font-size: $font-size-base;
-    transition: color $transition-fast;
+    align-self: flex-start;
+    color: $color-primary;
+    font-size: $font-size-sm;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $border-radius-sm;
+    transition: background $transition-fast;
 
     &:hover {
-      color: $color-white;
+      background: rgba($color-primary, 0.1);
     }
   }
 
   &__title {
-    font-size: $font-size-xl;
+    font-size: $font-size-lg;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  &__info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: $spacing-xs;
+    font-size: $font-size-sm;
+  }
+
+  &__format {
+    color: $color-primary;
+    font-weight: bold;
+  }
+
+  &__overtime {
+    color: $color-success;
     font-weight: bold;
   }
 
   &__content {
     @include flex-column;
     flex: 1;
-    gap: $spacing-lg;
+    gap: $spacing-sm;
   }
 
-  &__info {
+  &__opponent,
+  &__me {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__player {
     @include card;
     display: flex;
-    gap: $spacing-md;
     align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-md;
+    min-width: 280px;
+    transition: all $transition-base;
+    opacity: 0.5;
+
+    &--filled {
+      opacity: 1;
+      border: 2px solid $color-primary;
+    }
+  }
+
+  &__player-icon {
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  &__player-info {
+    @include flex-column;
+    gap: $spacing-xs;
+    flex: 1;
+  }
+
+  &__player-label {
+    font-size: $font-size-base;
+    font-weight: bold;
+  }
+
+  &__player-status {
     font-size: $font-size-sm;
+    color: $color-gray-light;
+
+    &--ready {
+      color: $color-success;
+      font-weight: bold;
+    }
   }
 
-  &__format {
-    font-weight: bold;
-    color: $color-primary;
-  }
-
-  &__overtime {
-    color: $color-success;
-  }
-
-  &__players {
-    margin-left: auto;
-    font-weight: bold;
-  }
-
-  &__seats {
+  &__card-space {
     display: flex;
-    flex-direction: column;
-    gap: $spacing-md;
+    justify-content: center;
+    padding: $spacing-sm 0;
+  }
+
+  &__card-area {
+    @include card;
+    @include flex-column;
+    @include flex-center;
+    gap: $spacing-xs;
+    width: 100%;
+    max-width: 400px;
+    min-height: 80px;
+    border: 2px dashed $color-gray-dark;
+    background: rgba($color-bg-card, 0.5);
+  }
+
+  &__card-label {
+    font-size: $font-size-sm;
+    color: $color-gray-light;
+    text-align: center;
   }
 
   &__ready-btn {
     @include button-reset;
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    margin-top: auto;
     background: $color-primary;
     color: $color-white;
-    padding: $spacing-md;
-    border-radius: $border-radius-md;
-    font-size: $font-size-lg;
+    border-radius: $border-radius-sm;
     font-weight: bold;
-    transition: background $transition-base;
-    margin-top: auto;
+    font-size: $font-size-base;
+    transition: all $transition-base;
 
-    &:hover:not(:disabled) {
+    &:hover {
       background: color.scale($color-primary, $lightness: -17%);
     }
 
-    &:disabled {
-      background: $color-gray-medium;
-      cursor: not-allowed;
-    }
-
     &--ready {
-      background: $color-danger;
+      background: $color-success;
 
       &:hover {
-        background: color.scale($color-danger, $lightness: -17.5%);
+        background: color.scale($color-success, $lightness: -17%);
       }
     }
   }
-}
 
-.seat {
-  @include card;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: $spacing-lg;
-
-  &--empty {
-    opacity: 0.5;
-    border: 2px dashed $color-gray-medium;
-    background: transparent;
-  }
-
-  &--filled {
-    border: 2px solid $color-primary;
-  }
-
-  &__label {
+  &__vs {
+    @include flex-center;
     font-size: $font-size-lg;
     font-weight: bold;
+    color: $color-gray-light;
+    padding: $spacing-xs 0;
   }
 
-  &__status {
-    font-size: $font-size-sm;
+  &__waiting {
+    @include flex-center;
+    padding: $spacing-md;
+  }
+
+  &__waiting-text {
     color: $color-gray-light;
+    font-size: $font-size-sm;
+    text-align: center;
   }
 }

@@ -30,8 +30,8 @@ export class GameRepository {
     await this.matchRepo.update(id, data);
   }
 
-  async createRound(matchId: string, roundNumber: number, starterId: string): Promise<Round> {
-    const round = this.roundRepo.create({ matchId, roundNumber, starterId });
+  async createRound(matchId: string, roundNumber: number, starterId: string, gameNumber: number): Promise<Round> {
+    const round = this.roundRepo.create({ matchId, roundNumber, starterId, gameNumber });
     return this.roundRepo.save(round);
   }
 

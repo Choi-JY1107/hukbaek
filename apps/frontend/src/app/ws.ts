@@ -26,8 +26,13 @@ export const onMessage = <T extends WsServerToClient['t']>(
   handler: (data: Extract<WsServerToClient, { t: T }>) => void,
 ) => {
   const ws = getSocket();
-  ws.on(type, handler);
-  return () => ws.off(type, handler);
+  const wrappedHandler = (msg: WsServerToClient) => {
+    if (msg.t === type) {
+      handler(msg as Extract<WsServerToClient, { t: T }>);
+    }
+  };
+  ws.on('message', wrappedHandler);
+  return () => ws.off('message', wrappedHandler);
 };
 
 export const disconnectSocket = () => {

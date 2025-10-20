@@ -15,7 +15,10 @@ export class Round {
   match!: Match;
 
   @Column()
-  roundNumber!: number;
+  roundNumber!: number; // 1-9 (게임 내 라운드)
+
+  @Column({ default: 1 })
+  gameNumber!: number; // 1, 2, 3... (몇 번째 게임인지)
 
   @Column()
   starterId!: string;
