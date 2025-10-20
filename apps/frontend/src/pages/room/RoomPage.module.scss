@@ -1,5 +1,6 @@
-@import '../../shared/styles/variables';
-@import '../../shared/styles/mixins';
+@use 'sass:color';
+@use '../../shared/styles/variables' as *;
+@use '../../shared/styles/mixins' as *;
 
 .room {
   @include flex-column;
@@ -78,7 +79,7 @@
     margin-top: auto;
 
     &:hover:not(:disabled) {
-      background: darken($color-primary, 10%);
+      background: color.scale($color-primary, $lightness: -17%);
     }
 
     &:disabled {
@@ -90,7 +91,7 @@
       background: $color-danger;
 
       &:hover {
-        background: darken($color-danger, 10%);
+        background: color.scale($color-danger, $lightness: -17.5%);
       }
     }
   }

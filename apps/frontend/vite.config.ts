@@ -10,6 +10,13 @@ export default defineConfig({
       '@shared': path.resolve(__dirname, '../../packages/shared'),
     },
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler',
+      },
+    },
+  },
   server: {
     port: 3000,
     proxy: {

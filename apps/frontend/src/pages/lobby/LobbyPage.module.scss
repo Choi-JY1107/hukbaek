@@ -1,5 +1,6 @@
-@import '../../shared/styles/variables';
-@import '../../shared/styles/mixins';
+@use 'sass:color';
+@use '../../shared/styles/variables' as *;
+@use '../../shared/styles/mixins' as *;
 
 .lobby {
   @include flex-column;
@@ -31,7 +32,7 @@
     transition: background $transition-base;
 
     &:hover {
-      background: darken($color-primary, 10%);
+      background: color.scale($color-primary, $lightness: -17%);
     }
   }
 
@@ -151,7 +152,7 @@
     color: $color-white;
 
     &:hover:not(:disabled) {
-      background: lighten($color-gray-dark, 10%);
+      background: color.scale($color-gray-dark, $lightness: 12.5%);
     }
   }
 
@@ -160,7 +161,7 @@
     color: $color-white;
 
     &:hover:not(:disabled) {
-      background: darken($color-primary, 10%);
+      background: color.scale($color-primary, $lightness: -17%);
     }
 
     &:disabled {
