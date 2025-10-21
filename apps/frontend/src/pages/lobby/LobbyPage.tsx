@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useAppStore } from '../../app/store';
 import { api, CreateRoomRequest } from '../../shared/api/endpoints';
 import { RoomInfo } from '@shared/types/room';
-import { RoomFormat } from '@shared/types/game';
 import { ROOM_FORMATS, FORMAT_LABELS } from '@shared/constants/index';
 import s from './LobbyPage.module.scss';
 
@@ -10,10 +9,13 @@ export const LobbyPage: React.FC = () => {
   const { setView, setRoom, setMe } = useAppStore();
   const [rooms, setRooms] = useState<RoomInfo[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<RoomInfo | null>(null);
+  const [joinFormData, setJoinFormData] = useState({ nickname: '', password: '' });
   const [formData, setFormData] = useState<CreateRoomRequest>({
     title: '',
     password: '',
-    format: 'bo3',
+    format: 'bo1',
     overtime: false,
     nickname: '',
   });
@@ -41,7 +43,7 @@ export const LobbyPage: React.FC = () => {
     setFormData({
       title: '',
       password: '',
-      format: 'bo3',
+      format: 'bo1',
       overtime: false,
       nickname: '',
     });
@@ -97,48 +99,65 @@ export const LobbyPage: React.FC = () => {
     }
   };
 
-  const handleJoinRoom = async (room: RoomInfo) => {
+  const handleJoinRoom = (room: RoomInfo) => {
     // 2명이 차 있으면 참가 불가
     if (room.playerCount >= 2) {
       return;
     }
 
-    const nickname = prompt('닉네임을 입력하세요');
-    if (!nickname) return;
+    setSelectedRoom(room);
+    setJoinFormData({ nickname: '', password: '' });
+    setShowJoinModal(true);
+    setError('');
+  };
 
-    let password: string | undefined;
-    if (room.locked) {
-      password = prompt('비밀번호를 입력하세요') || undefined;
-      if (!password) return;
+  const handleJoinSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedRoom) return;
+
+    setError('');
+
+    if (!joinFormData.nickname.trim()) {
+      setError('닉네임을 입력해주세요');
+      return;
     }
 
+    if (selectedRoom.locked && !joinFormData.password) {
+      setError('비밀번호를 입력해주세요');
+      return;
+    }
+
+    setIsLoading(true);
     try {
       const response = await api.joinRoom({
-        roomId: room.id,
-        nickname,
-        password,
+        roomId: selectedRoom.id,
+        nickname: joinFormData.nickname,
+        password: joinFormData.password || undefined,
       });
 
       // 방 정보와 플레이어 정보를 store에 저장
       setRoom({
-        id: room.id,
-        title: room.title,
-        locked: room.locked,
-        format: room.format,
-        overtime: room.overtime,
-        playerCount: room.playerCount,
+        id: selectedRoom.id,
+        title: selectedRoom.title,
+        locked: selectedRoom.locked,
+        format: selectedRoom.format,
+        overtime: selectedRoom.overtime,
+        playerCount: selectedRoom.playerCount,
       });
 
       setMe({
         id: response.playerId,
-        nickname,
+        nickname: joinFormData.nickname,
         ready: false,
         tilesLeft: [],
       });
 
+      setShowJoinModal(false);
       setView('room');
     } catch (err: any) {
-      alert(err.message || '방 참가에 실패했습니다');
+      setError(err.message || '방 참가에 실패했습니다');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -166,9 +185,8 @@ export const LobbyPage: React.FC = () => {
               .map((room) => (
                 <li
                   key={room.id}
-                  className={`${s['lobby__card']} ${room.locked ? s['lobby__card--locked'] : ''} ${
-                    room.playerCount >= 2 ? s['lobby__card--full'] : ''
-                  }`}
+                  className={`${s['lobby__card']} ${room.locked ? s['lobby__card--locked'] : ''} ${room.playerCount >= 2 ? s['lobby__card--full'] : ''
+                    }`}
                   onClick={() => room.playerCount < 2 && handleJoinRoom(room)}
                   style={{ cursor: room.playerCount >= 2 ? 'not-allowed' : 'pointer' }}
                 >
@@ -235,32 +253,39 @@ export const LobbyPage: React.FC = () => {
 
               <div className={s['form__group']}>
                 <label className={s['form__label']}>게임 형식</label>
-                <div className={s['form__radio-group']}>
+                <div className={s['format-selector']}>
                   {ROOM_FORMATS.map((format) => (
-                    <label key={format} className={s['form__radio']}>
-                      <input
-                        type="radio"
-                        name="format"
-                        value={format}
-                        checked={formData.format === format}
-                        onChange={(e) => setFormData({ ...formData, format: e.target.value as RoomFormat })}
-                        disabled={isLoading}
-                      />
-                      <span>{FORMAT_LABELS[format]}</span>
-                    </label>
+                    <button
+                      key={format}
+                      type="button"
+                      className={`${s['format-button']} ${formData.format === format ? s['format-button--active'] : ''}`}
+                      onClick={() => setFormData({ ...formData, format })}
+                      disabled={isLoading}
+                    >
+                      <span className={s['format-button__icon']}>
+                        {format === 'bo1' && '⚡'}
+                        {format === 'bo3' && '🎯'}
+                        {format === 'bo5' && '👑'}
+                      </span>
+                      <span className={s['format-button__label']}>{FORMAT_LABELS[format]}</span>
+                    </button>
                   ))}
                 </div>
               </div>
 
               <div className={s['form__group']}>
-                <label className={s['form__checkbox']}>
+                <label className={s['form__label']}>연장 허용</label>
+                <label className={s['toggle-switch']}>
                   <input
                     type="checkbox"
                     checked={formData.overtime}
                     onChange={(e) => setFormData({ ...formData, overtime: e.target.checked })}
                     disabled={isLoading}
                   />
-                  <span>연장 허용</span>
+                  <span className={s['toggle-switch__slider']}></span>
+                  <span className={s['toggle-switch__label']}>
+                    {formData.overtime ? '허용' : '비허용'}
+                  </span>
                 </label>
               </div>
 
@@ -281,6 +306,72 @@ export const LobbyPage: React.FC = () => {
                   disabled={isLoading}
                 >
                   {isLoading ? '생성 중...' : '방 만들기'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showJoinModal && selectedRoom && (
+        <div className={s.modal} onClick={() => setShowJoinModal(false)}>
+          <div className={s['modal__content']} onClick={(e) => e.stopPropagation()}>
+            <h2 className={s['modal__title']}>방 참가</h2>
+            <div className={s['join-room-info']}>
+              <div className={s['join-room-info__title']}>{selectedRoom.title}</div>
+              <div className={s['join-room-info__meta']}>
+                <span className={s['join-room-info__format']}>{FORMAT_LABELS[selectedRoom.format]}</span>
+                {selectedRoom.overtime && <span className={s['join-room-info__overtime']}>연장</span>}
+              </div>
+            </div>
+
+            <form className={s['modal__form']} onSubmit={handleJoinSubmit}>
+              <div className={s['form__group']}>
+                <label className={s['form__label']}>닉네임</label>
+                <input
+                  type="text"
+                  className={s['form__input']}
+                  value={joinFormData.nickname}
+                  onChange={(e) => setJoinFormData({ ...joinFormData, nickname: e.target.value })}
+                  placeholder="닉네임을 입력하세요"
+                  maxLength={20}
+                  disabled={isLoading}
+                  autoFocus
+                />
+              </div>
+
+              {selectedRoom.locked && (
+                <div className={s['form__group']}>
+                  <label className={s['form__label']}>비밀번호</label>
+                  <input
+                    type="password"
+                    className={s['form__input']}
+                    value={joinFormData.password}
+                    onChange={(e) => setJoinFormData({ ...joinFormData, password: e.target.value })}
+                    placeholder="비밀번호를 입력하세요"
+                    maxLength={20}
+                    disabled={isLoading}
+                  />
+                </div>
+              )}
+
+              {error && <div className={s['form__error']}>{error}</div>}
+
+              <div className={s['modal__actions']}>
+                <button
+                  type="button"
+                  className={s['modal__cancel']}
+                  onClick={() => setShowJoinModal(false)}
+                  disabled={isLoading}
+                >
+                  취소
+                </button>
+                <button
+                  type="submit"
+                  className={s['modal__submit']}
+                  disabled={isLoading}
+                >
+                  {isLoading ? '참가 중...' : '참가하기'}
                 </button>
               </div>
             </form>
