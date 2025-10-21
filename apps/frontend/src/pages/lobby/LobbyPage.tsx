@@ -305,7 +305,7 @@ export const LobbyPage: React.FC = () => {
                   className={s['modal__submit']}
                   disabled={isLoading}
                 >
-                  {isLoading ? '생성 중...' : '방 만들기'}
+                  {isLoading ? '생성 중...' : '방\n만들기'}
                 </button>
               </div>
             </form>
