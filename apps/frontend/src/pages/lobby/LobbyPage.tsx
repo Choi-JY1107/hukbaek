@@ -318,8 +318,9 @@ export const LobbyPage: React.FC = () => {
           <div className={s['modal__content']} onClick={(e) => e.stopPropagation()}>
             <h2 className={s['modal__title']}>방 참가</h2>
             <div className={s['join-room-info']}>
-              <div className={s['join-room-info__title']}>{selectedRoom.title}</div>
+              <div className={s['join-room-info__title']}>방 제목 : {selectedRoom.title}</div>
               <div className={s['join-room-info__meta']}>
+                <span className={s['join-room-info__label']}>승부 수 : </span>
                 <span className={s['join-room-info__format']}>{FORMAT_LABELS[selectedRoom.format]}</span>
                 {selectedRoom.overtime && <span className={s['join-room-info__overtime']}>연장</span>}
               </div>

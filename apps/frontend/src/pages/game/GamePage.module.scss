@@ -30,6 +30,14 @@
     color: $color-gray-light;
   }
 
+  &__round-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: $font-size-base;
+    color: $color-gray-light;
+  }
+
   &__history-grid {
     margin-top: $spacing-sm;
     padding: $spacing-sm;
@@ -249,6 +257,119 @@
     &--disabled {
       opacity: 0.4;
       cursor: not-allowed;
+    }
+  }
+
+  &__memo-widget {
+    @include card;
+    margin-bottom: $spacing-md;
+    padding: $spacing-md;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid $color-gray-medium;
+    border-radius: $border-radius-lg;
+  }
+
+  &__memo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: $spacing-sm;
+    user-select: none;
+
+    &:hover {
+      .game__memo-title {
+        color: $color-primary;
+      }
+    }
+  }
+
+  &__memo-title {
+    font-size: $font-size-sm;
+    color: $color-gray-light;
+    font-weight: bold;
+    transition: color $transition-fast;
+  }
+
+  &__memo-toggle {
+    font-size: $font-size-sm;
+    color: $color-gray-light;
+  }
+
+  &__memo-tiles {
+    display: flex;
+    gap: $spacing-xs;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: $spacing-sm;
+  }
+
+  &__memo-btn {
+    @include button-reset;
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border: 2px solid;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-base;
+    font-weight: bold;
+    transition: all $transition-fast;
+
+    &--black {
+      background: #1a1a1a;
+      border-color: #333;
+      color: $color-white;
+
+      &:hover {
+        background: #000;
+        border-color: $color-primary;
+      }
+    }
+
+    &--white {
+      background: #f5f5f5;
+      border-color: #ddd;
+      color: #1a1a1a;
+
+      &:hover {
+        background: #fff;
+        border-color: $color-primary;
+      }
+    }
+
+    &--check {
+      border-color: $color-success;
+      border-width: 3px;
+      box-shadow: 0 0 8px rgba($color-success, 0.4);
+    }
+
+    &--question {
+      border-color: #ff9800;
+      border-width: 3px;
+      box-shadow: 0 0 8px rgba(#ff9800, 0.4);
+    }
+  }
+
+  &__memo-mark {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    color: $color-white;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+
+    &--check {
+      background: $color-success;
+    }
+
+    &--question {
+      background: #ff9800;
     }
   }
 }

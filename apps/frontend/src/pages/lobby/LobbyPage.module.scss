@@ -390,11 +390,6 @@
 .join-room-info {
   @include card;
   margin-bottom: $spacing-md;
-  background: linear-gradient(
-    135deg,
-    color.scale($color-primary, $lightness: -60%) 0%,
-    color.scale($color-primary, $lightness: -70%) 100%
-  );
   border: 1px solid $color-primary;
 
   &__title {
@@ -408,6 +403,11 @@
     display: flex;
     gap: $spacing-sm;
     font-size: $font-size-sm;
+    align-items: center;
+  }
+
+  &__label {
+    color: $color-gray-light;
   }
 
   &__format {

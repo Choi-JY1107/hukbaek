@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAppStore } from '../../app/store';
 import { sendMessage, onMessage } from '../../app/ws';
 import { Tile } from '@shared/types/game';
+import { FORMAT_LABELS } from '@shared/constants/index';
 import s from './GamePage.module.scss';
 
 export const GamePage: React.FC = () => {
@@ -13,6 +14,8 @@ export const GamePage: React.FC = () => {
   const [oppColorHistory, setOppColorHistory] = useState<('black' | 'white')[]>([]);
   const [myHistory, setMyHistory] = useState<{ tile: number; result: 'win' | 'lose' | 'draw' }[]>([]);
   const [roundWins, setRoundWins] = useState<{ me: number; opp: number }>({ me: 0, opp: 0 });
+  const [oppTileMemo, setOppTileMemo] = useState<Record<number, 'check' | 'question' | null>>({});
+  const [isMemoCollapsed, setIsMemoCollapsed] = useState(true);
 
   useEffect(() => {
     const unsubGameStart = onMessage('game_start', (data) => {
@@ -23,6 +26,7 @@ export const GamePage: React.FC = () => {
       setOppColorHistory([]);
       setMyHistory([]);
       setRoundWins({ me: 0, opp: 0 });
+      setOppTileMemo({});
 
       // 패 초기화
       if (me && data.myTiles) {
@@ -102,6 +106,26 @@ export const GamePage: React.FC = () => {
     updateMyTilesLeft(me.tilesLeft.filter((t) => t !== tile));
   };
 
+  const toggleOppTileMemo = (tile: number) => {
+    setOppTileMemo((prev) => {
+      const current = prev[tile];
+      let next: 'check' | 'question' | null;
+
+      if (!current) {
+        next = 'check';
+      } else if (current === 'check') {
+        next = 'question';
+      } else {
+        next = null;
+      }
+
+      return {
+        ...prev,
+        [tile]: next,
+      };
+    });
+  };
+
   if (!game || !me || !room) {
     return <div>게임 정보가 없습니다.</div>;
   }
@@ -114,7 +138,39 @@ export const GamePage: React.FC = () => {
           <span>vs</span>
           <span>상대: {game.score.opp} ({roundWins.opp}승)</span>
         </div>
-        <div className={s['game__round']}>라운드 ({game.round}/9)</div>
+        <div className={s['game__round-info']}>
+          <span>라운드 ({game.round}/9)</span>
+          <span>{FORMAT_LABELS[room.format]}</span>
+        </div>
+
+        {/* 상대방 패 메모 위젯 */}
+        {game.round > 0 && (
+          <div className={s['game__memo-widget']}>
+            <div className={s['game__memo-header']} onClick={() => setIsMemoCollapsed(!isMemoCollapsed)}>
+              <div className={s['game__memo-title']}>상대 패 메모</div>
+              <div className={s['game__memo-toggle']}>{isMemoCollapsed ? '▲' : '▼'}</div>
+            </div>
+            {!isMemoCollapsed && (
+              <div className={s['game__memo-tiles']}>
+                {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((tile) => {
+                  const isBlack = tile % 2 === 0;
+                  const memoState = oppTileMemo[tile];
+                  return (
+                    <button
+                      key={tile}
+                      className={`${s['game__memo-btn']} ${isBlack ? s['game__memo-btn--black'] : s['game__memo-btn--white']} ${memoState ? s[`game__memo-btn--${memoState}`] : ''}`}
+                      onClick={() => toggleOppTileMemo(tile)}
+                    >
+                      {tile}
+                      {memoState === 'check' && <span className={`${s['game__memo-mark']} ${s['game__memo-mark--check']}`}>✓</span>}
+                      {memoState === 'question' && <span className={`${s['game__memo-mark']} ${s['game__memo-mark--question']}`}>?</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* 히스토리 그리드 (3 x 9) */}
         {myHistory.length > 0 && (
