@@ -1,23 +1,13 @@
 import { useEffect } from 'react';
-import { useAppStore } from '../store';
-import { onMessage } from '../ws';
+import { useAppStore } from '../model/store';
+import { useGameStore } from '@/entities/game/store';
+import { onMessage } from '@/shared/lib/websocket';
 
 export const WithWebSocket: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { setView, updateGameTurn, updateScore, setGame } = useAppStore();
+  const { setView } = useAppStore();
+  const { setGame } = useGameStore();
 
   useEffect(() => {
-    const unsubGameStart = onMessage('game_start', (data) => {
-      console.log('Game started:', data);
-    });
-
-    const unsubTurnInfo = onMessage('turn_info', (data) => {
-      updateGameTurn(data.yourTurn, data.round);
-    });
-
-    const unsubScore = onMessage('score', (data) => {
-      updateScore(data.me, data.opp, data.need);
-    });
-
     const unsubMatchResult = onMessage('match_result', (data) => {
       console.log('Match result:', data.result);
       setTimeout(() => {
@@ -31,13 +21,10 @@ export const WithWebSocket: React.FC<{ children: React.ReactNode }> = ({ childre
     });
 
     return () => {
-      unsubGameStart();
-      unsubTurnInfo();
-      unsubScore();
       unsubMatchResult();
       unsubError();
     };
-  }, [updateGameTurn, updateScore, setGame, setView]);
+  }, [setGame, setView]);
 
   return <>{children}</>;
 };

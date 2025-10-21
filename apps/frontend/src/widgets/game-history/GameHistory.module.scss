@@ -1,0 +1,70 @@
+@use '../../shared/styles/variables' as *;
+@use '../../shared/styles/mixins' as *;
+
+.game-history {
+  margin-top: $spacing-sm;
+  padding: $spacing-sm;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: $border-radius-sm;
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    margin-bottom: $spacing-xs;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__label {
+    min-width: 40px;
+    font-size: 0.75rem;
+    color: $color-gray-light;
+  }
+
+  &__tiles {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+  }
+
+  &__tile {
+    min-width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+
+    &--black {
+      background: #1a1a1a;
+      color: $color-white;
+    }
+
+    &--white {
+      background: #f5f5f5;
+      color: #1a1a1a;
+    }
+
+    &--win {
+      color: #4caf50;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    &--lose {
+      color: #f44336;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    &--draw {
+      color: $color-gray-light;
+      font-weight: bold;
+    }
+  }
+}

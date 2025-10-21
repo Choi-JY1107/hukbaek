@@ -1,0 +1,82 @@
+@use "sass:color";
+@use "../../shared/styles/variables" as *;
+@use "../../shared/styles/mixins" as *;
+
+.room-list {
+  height: 100%;
+
+  &__empty {
+    @include flex-center;
+    height: 100%;
+    color: $color-gray-medium;
+    text-align: center;
+  }
+
+  &__items {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  &__card {
+    @include card;
+    cursor: pointer;
+    transition: transform $transition-fast, box-shadow $transition-fast;
+
+    &:hover:not(&--full) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    &--locked {
+      border: 1px solid $color-gray-medium;
+    }
+
+    &--full {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__card-title {
+    font-size: $font-size-lg;
+    font-weight: bold;
+    margin-bottom: $spacing-xs;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+  }
+
+  &__lock-icon {
+    font-size: $font-size-base;
+  }
+
+  &__full-badge {
+    margin-left: auto;
+    font-size: $font-size-sm;
+    color: $color-danger;
+    font-weight: bold;
+  }
+
+  &__card-info {
+    display: flex;
+    gap: $spacing-sm;
+    font-size: $font-size-sm;
+    color: $color-gray-light;
+  }
+
+  &__format {
+    font-weight: bold;
+    color: $color-primary;
+  }
+
+  &__overtime {
+    color: $color-success;
+  }
+
+  &__players {
+    margin-left: auto;
+    font-weight: bold;
+  }
+}
+

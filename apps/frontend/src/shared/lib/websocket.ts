@@ -1,5 +1,5 @@
 import { io, Socket } from 'socket.io-client';
-import { ENV } from '../shared/config/env';
+import { ENV } from '../config/env';
 import { WsClientToServer, WsServerToClient } from '@shared/ws/messages';
 
 let socket: Socket | null = null;

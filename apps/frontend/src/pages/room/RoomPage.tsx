@@ -1,46 +1,25 @@
-import { useEffect, useState } from 'react';
-import { useAppStore } from '../../app/store';
-import { sendMessage, onMessage, disconnectSocket } from '../../app/ws';
+import { useEffect } from 'react';
+import { useRoomStore } from '@/entities/room/store';
+import { usePlayerStore } from '@/entities/player/store';
+import { useGameStore } from '@/entities/game/store';
+import { useRoomReady } from '@/features/room-ready/useRoomReady';
+import { disconnectSocket } from '@/shared/lib/websocket';
+import { onMessage } from '@/shared/lib/websocket';
 import s from './RoomPage.module.scss';
 
-export const RoomPage: React.FC = () => {
-  const { room, me, opponent, setView, setGame, setMe, setOpponent } = useAppStore();
-  const [ready, setReady] = useState(false);
-  const [players, setPlayers] = useState<number>(1);
-  const [readyStates, setReadyStates] = useState<[boolean, boolean]>([false, false]);
-  const [isHost] = useState(true);
+type Props = {
+  onNavigateToLobby: () => void;
+  onNavigateToGame: () => void;
+};
+
+export const RoomPage: React.FC<Props> = ({ onNavigateToLobby, onNavigateToGame }) => {
+  const { room } = useRoomStore();
+  const { me, opponent, setMe } = usePlayerStore();
+  const { setGame } = useGameStore();
+  const { ready, players, oppReady, myReady, handleReady } = useRoomReady();
 
   useEffect(() => {
-    // 방에 입장했음을 서버에 알림 (WebSocket room join + socketId 업데이트)
-    if (room && me) {
-      sendMessage({ t: 'join_room', roomId: room.id, playerId: me.id });
-    }
-
-    const unsubRoomUpdated = onMessage('room_updated', (data) => {
-      console.log('🔔 [room_updated]', data);
-      console.log('🔔 내 닉네임:', me?.nickname);
-      setPlayers(data.players);
-      setReadyStates(data.readyStates);
-
-      // 상대방 정보를 store에 저장
-      if (data.playerNames && me && data.playerNames.length === 2) {
-        console.log('🔔 playerNames:', data.playerNames);
-        const oppName = data.playerNames.find(name => name !== me.nickname);
-        console.log('🔔 상대 닉네임:', oppName);
-        if (oppName) {
-          // store에 상대방 정보 저장
-          setOpponent({
-            id: '', // 백엔드에서 ID를 보내지 않으므로 빈 문자열
-            nickname: oppName,
-            ready: false, // ready 상태는 readyStates로 관리
-            tilesLeft: [],
-          });
-        }
-      }
-    });
-
     const unsubGameStart = onMessage('game_start', (data) => {
-      // 내 패 정보 업데이트
       if (me && data.myTiles) {
         setMe({ ...me, tilesLeft: data.myTiles });
       }
@@ -51,33 +30,22 @@ export const RoomPage: React.FC = () => {
         myTurn: me?.id === data.starterId,
         score: { me: 0, opp: 0, need: 3 },
       });
-      setView('game');
+      onNavigateToGame();
     });
 
     return () => {
-      unsubRoomUpdated();
       unsubGameStart();
     };
-  }, [me, room, setGame, setView]);
-
-  const handleReady = () => {
-    if (!room || players < 2) return;
-    const newReady = !ready;
-    setReady(newReady);
-    sendMessage({ t: 'set_ready', roomId: room.id, ready: newReady });
-  };
+  }, [me, setGame, setMe, onNavigateToGame]);
 
   const handleLeave = () => {
     disconnectSocket();
-    setView('lobby');
+    onNavigateToLobby();
   };
 
   if (!room) {
     return <div className={s['room__empty']}>방 정보가 없습니다.</div>;
   }
-
-  const oppReady = isHost ? readyStates[1] : readyStates[0];
-  const myReady = isHost ? readyStates[0] : readyStates[1];
 
   return (
     <div className={s.room}>
@@ -93,7 +61,6 @@ export const RoomPage: React.FC = () => {
       </header>
 
       <div className={s['room__content']}>
-        {/* 상대 플레이어 */}
         <div className={s['room__opponent']}>
           <div className={`${s['room__player']} ${players >= 2 ? s['room__player--filled'] : ''}`}>
             <div className={s['room__player-icon']}>
@@ -112,10 +79,8 @@ export const RoomPage: React.FC = () => {
           </div>
         </div>
 
-        {/* VS 표시 */}
         <div className={s['room__vs']}>VS</div>
 
-        {/* 내 플레이어 */}
         <div className={s['room__me']}>
           <div className={`${s['room__player']} ${s['room__player--filled']}`}>
             <div className={s['room__player-icon']}>👤</div>
@@ -135,7 +100,6 @@ export const RoomPage: React.FC = () => {
         )}
       </div>
 
-      {/* 준비하기 버튼 - 맨 아래 */}
       {players >= 2 && (
         <button
           className={`${s['room__ready-btn']} ${ready ? s['room__ready-btn--ready'] : ''}`}
