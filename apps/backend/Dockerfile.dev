@@ -1,0 +1,26 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# pnpm 설치
+RUN npm install -g pnpm
+
+# 루트 설정 파일들 복사
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY tsconfig.base.json ./
+
+# 패키지 파일들 복사
+COPY packages/shared/package.json ./packages/shared/package.json
+COPY packages/shared/tsconfig.json ./packages/shared/tsconfig.json
+COPY apps/backend/package.json ./apps/backend/package.json
+COPY apps/backend/tsconfig.json ./apps/backend/tsconfig.json
+
+# 의존성 설치
+RUN pnpm install
+
+# 소스 코드는 volume으로 마운트됨
+
+EXPOSE 4000
+
+# Hot reload를 위해 dev 모드로 실행
+CMD ["sh", "-c", "cd /app/packages/shared && pnpm build && cd /app/apps/backend && pnpm dev"]

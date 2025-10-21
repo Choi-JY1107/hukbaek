@@ -1,100 +1,171 @@
 # 흑과백 (Black & White)
 
-모바일 기준 2인 대전 웹게임
+2인용 타일 뒤집기 게임
 
-## 현재 상태 (2025-10-20)
+## 🚀 빠른 시작 (Docker)
 
-- ✅ PostgreSQL Docker 실행 중
-- ✅ 프론트엔드 구조 완성
-- ✅ 백엔드 구조 완성
-- ⚠️  백엔드 TypeScript 빌드 이슈 (paths alias 문제)
+Docker만 있으면 한 번에 모든 것을 실행할 수 있습니다!
 
-## 빠른 시작
+### 필요한 것
+- Docker Desktop 설치 ([다운로드](https://www.docker.com/products/docker-desktop/))
 
-### 1. PostgreSQL 실행
+### 실행 방법
 
 ```bash
-docker run -d --name hukbaek-db \
-  -e POSTGRES_DB=hukbaek \
-  -e POSTGRES_USER=user \
-  -e POSTGRES_PASSWORD=pass \
-  -p 5432:5432 \
-  postgres:latest
+# 1. Docker Compose로 모든 서비스 실행
+docker-compose up
+
+# 또는 백그라운드로 실행
+docker-compose up -d
 ```
 
-### 2. 환경 변수 설정
+그게 전부입니다! 🎉
+
+- **프론트엔드**: http://localhost:5173
+- **백엔드 API**: http://localhost:4000/api
+- **데이터베이스**: PostgreSQL (localhost:5432)
+
+### 서비스 중지
 
 ```bash
-cp .env.example .env
+# 중지
+docker-compose down
+
+# 중지 + 데이터 삭제
+docker-compose down -v
 ```
 
-### 3. 의존성 설치
+### 로그 확인
 
 ```bash
+# 모든 서비스 로그
+docker-compose logs -f
+
+# 특정 서비스만
+docker-compose logs -f backend
+docker-compose logs -f frontend
+docker-compose logs -f db
+```
+
+### 재빌드
+
+코드를 수정한 후:
+
+```bash
+# 이미지 재빌드 후 실행
+docker-compose up --build
+```
+
+## 🎮 게임 규칙
+
+1. 두 플레이어가 번갈아가며 타일을 뒤집습니다
+2. 각 라운드마다 자신의 색깔이 많으면 승리
+3. 총 5라운드 진행
+4. 최종적으로 더 많은 라운드를 이긴 플레이어가 승리
+
+## 🛠️ 기술 스택
+
+- **Frontend**: React, TypeScript, Vite, Redux Toolkit, Socket.IO Client
+- **Backend**: NestJS, TypeScript, Socket.IO, PostgreSQL
+- **Database**: PostgreSQL 16
+- **DevOps**: Docker, Docker Compose
+
+## 📦 수동 설치 (Docker 없이)
+
+Docker를 사용하지 않으려면:
+
+### 필요한 것
+- Node.js 20+
+- pnpm
+- PostgreSQL 16
+
+### 설정
+
+```bash
+# 1. 의존성 설치
 pnpm install
-```
 
-### 4. Shared 패키지 빌드
+# 2. PostgreSQL 설정
+createdb black_and_white
+psql -d black_and_white -f apps/backend/src/database/schema.sql
 
-```bash
-cd packages/shared && pnpm build
-```
+# 3. 환경 변수 설정
+# .env 파일 수정 (DATABASE_HOST=localhost로)
 
-### 5. 백엔드 실행 (임시 해결책)
-
-```bash
+# 4. 백엔드 실행
 cd apps/backend
-npm install -g ts-node tsconfig-paths
-ts-node -r tsconfig-paths/register src/main.ts
-```
+pnpm dev
 
-### 6. 프론트엔드 실행
-
-```bash
+# 5. 프론트엔드 실행 (새 터미널)
 cd apps/frontend
 pnpm dev
 ```
 
-## 기술 스택
+## 🚢 프로덕션 배포
 
-- **Frontend**: React + TypeScript + Vite + Zustand + SCSS Module (BEM)
-- **Backend**: Nest.js + TypeScript + WebSocket (Socket.io)
-- **Database**: PostgreSQL + TypeORM
-- **Infrastructure**: AWS EC2 + Nginx + PM2 + HTTPS (Certbot)
+프로덕션 배포는 [DEPLOYMENT.md](DEPLOYMENT.md)를 참고하세요.
 
-## 게임 규칙
+- **Backend**: Fly.io
+- **Frontend**: Vercel
+- **Database**: Neon PostgreSQL
 
-- 타일: 0~8 (흑: 0,2,4,6,8 / 백: 1,3,5,7)
-- 1라운드 선공 랜덤, 이후 승자 선공
-- 무승부 시 선공 유지
-- 딜러(서버)만 타일 숫자 확인 → 승패만 통지
-- 매치 포맷: bo1, bo3, bo5 (연장 여부 선택 가능)
+## 🐛 문제 해결
 
-## 알려진 이슈
+### Docker 컨테이너가 시작되지 않을 때
 
-### TypeScript Paths Alias 문제
-
-Nest.js의 `nest build`가 `@shared/*` paths를 해결하지 못하는 문제.
-
-**해결 방법 1**: `ts-node` 사용
 ```bash
-cd apps/backend
-ts-node -r tsconfig-paths/register src/main.ts
+# 모든 컨테이너와 볼륨 삭제 후 재시작
+docker-compose down -v
+docker-compose up --build
 ```
 
-**해결 방법 2**: 상대 경로로 변경
-모든 `@shared/*` import를 상대 경로로 변경
-```typescript
-// Before
-import { RoomFormat } from '@shared/types/game.js';
+### 포트가 이미 사용 중일 때
 
-// After
-import { RoomFormat } from '../../../packages/shared/types/game.js';
+```bash
+# 5173, 4000, 5432 포트를 사용하는 프로세스 확인
+lsof -i :5173
+lsof -i :4000
+lsof -i :5432
+
+# 프로세스 종료
+kill -9 <PID>
 ```
 
-**해결 방법 3**: ttsc (TypeScript Transformer) 사용
+### 데이터베이스 연결 오류
+
 ```bash
-pnpm add -D ttypescript typescript-transform-paths
+# 데이터베이스 헬스 체크
+docker-compose ps
+
+# DB 컨테이너 재시작
+docker-compose restart db
+```
+
+## 📝 개발 팁
+
+### Hot Reload
+Docker Compose는 volume을 사용하므로, 코드를 수정하면 자동으로 반영됩니다.
+
+### 데이터베이스 초기화
+
+```bash
+# 데이터베이스 볼륨 삭제
+docker-compose down -v
+
+# 재시작 (스키마 자동 생성)
+docker-compose up
+```
+
+### 패키지 추가
+
+```bash
+# 로컬에서 패키지 추가
+cd apps/backend  # 또는 apps/frontend
+pnpm add <package-name>
+
+# Docker 이미지 재빌드
+docker-compose build backend  # 또는 frontend
+docker-compose up
 ```
 
 ## 프로젝트 구조

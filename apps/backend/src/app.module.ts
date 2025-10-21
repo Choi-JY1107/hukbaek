@@ -7,11 +7,11 @@ import { GameModule } from './modules/game/game.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'user',
-      password: 'pass',
-      database: 'hukbaek',
+      host: process.env.DATABASE_HOST || 'localhost',
+      port: parseInt(process.env.DATABASE_PORT || '5432'),
+      username: process.env.DATABASE_USER || 'user',
+      password: process.env.DATABASE_PASSWORD || 'pass',
+      database: process.env.DATABASE_NAME || 'black_and_white',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
