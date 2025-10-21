@@ -4,11 +4,10 @@ import { sendMessage, onMessage, disconnectSocket } from '../../app/ws';
 import s from './RoomPage.module.scss';
 
 export const RoomPage: React.FC = () => {
-  const { room, me, setView, setGame, setMe } = useAppStore();
+  const { room, me, opponent, setView, setGame, setMe, setOpponent } = useAppStore();
   const [ready, setReady] = useState(false);
   const [players, setPlayers] = useState<number>(1);
   const [readyStates, setReadyStates] = useState<[boolean, boolean]>([false, false]);
-  const [opponentName, setOpponentName] = useState<string>('');
   const [isHost] = useState(true);
 
   useEffect(() => {
@@ -23,13 +22,19 @@ export const RoomPage: React.FC = () => {
       setPlayers(data.players);
       setReadyStates(data.readyStates);
 
-      // 상대방 닉네임 설정
-      if (data.playerNames && me) {
+      // 상대방 정보를 store에 저장
+      if (data.playerNames && me && data.playerNames.length === 2) {
         console.log('🔔 playerNames:', data.playerNames);
         const oppName = data.playerNames.find(name => name !== me.nickname);
         console.log('🔔 상대 닉네임:', oppName);
         if (oppName) {
-          setOpponentName(oppName);
+          // store에 상대방 정보 저장
+          setOpponent({
+            id: '', // 백엔드에서 ID를 보내지 않으므로 빈 문자열
+            nickname: oppName,
+            ready: false, // ready 상태는 readyStates로 관리
+            tilesLeft: [],
+          });
         }
       }
     });
@@ -96,7 +101,7 @@ export const RoomPage: React.FC = () => {
             </div>
             <div className={s['room__player-info']}>
               <div className={s['room__player-label']}>
-                상대 {opponentName && `(${opponentName})`}
+                상대 {opponent?.nickname && `(${opponent.nickname})`}
               </div>
               {players >= 2 && (
                 <div className={`${s['room__player-status']} ${oppReady ? s['room__player-status--ready'] : ''}`}>

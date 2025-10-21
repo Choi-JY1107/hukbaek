@@ -33,10 +33,12 @@ export type GameState = {
 export type AppState = {
   view: ViewType;
   me: PlayerState | null;
+  opponent: PlayerState | null;
   room: RoomState | null;
   game: GameState | null;
   setView: (view: ViewType) => void;
   setMe: (me: PlayerState | null) => void;
+  setOpponent: (opponent: PlayerState | null) => void;
   setRoom: (room: RoomState | null) => void;
   setGame: (game: GameState | null) => void;
   updateMyTilesLeft: (tiles: Tile[]) => void;
@@ -47,10 +49,12 @@ export type AppState = {
 export const useAppStore = create<AppState>((set) => ({
   view: 'lobby',
   me: null,
+  opponent: null,
   room: null,
   game: null,
   setView: (view) => set({ view }),
   setMe: (me) => set({ me }),
+  setOpponent: (opponent) => set({ opponent }),
   setRoom: (room) => set({ room }),
   setGame: (game) => set({ game }),
   updateMyTilesLeft: (tiles) =>
