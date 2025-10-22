@@ -8,6 +8,7 @@
   max-width: 600px;
   margin: 0 auto;
   padding: $spacing-md;
+  overflow-y: auto;
 
   &__header {
     display: flex;

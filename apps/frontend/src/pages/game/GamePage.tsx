@@ -125,7 +125,7 @@ export const GamePage: React.FC = () => {
           <div className={s['game__memo-widget']}>
             <div className={s['game__memo-header']} onClick={() => setIsMemoCollapsed(!isMemoCollapsed)}>
               <div className={s['game__memo-title']}>상대 패 메모</div>
-              <div className={s['game__memo-toggle']}>{isMemoCollapsed ? '▲' : '▼'}</div>
+              <div className={s['game__memo-toggle']}>{isMemoCollapsed ? '▼' : '▲'}</div>
             </div>
             {!isMemoCollapsed && (
               <div className={s['game__memo-tiles']}>
