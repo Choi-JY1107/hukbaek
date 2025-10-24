@@ -4,10 +4,51 @@
 
 .room-list {
   height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-md;
+    padding: 0 $spacing-xs;
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: bold;
+    color: $color-white;
+  }
+
+  &__refresh {
+    @include button-reset;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $color-gray-dark;
+    border: 1px solid $color-gray-medium;
+    border-radius: 50%;
+    font-size: 24px;
+    line-height: 1;
+    color: $color-white;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &--spinning {
+      animation: spin 0.5s linear;
+    }
+  }
 
   &__empty {
     @include flex-center;
-    height: 100%;
+    flex: 1;
     color: $color-gray-medium;
     text-align: center;
   }
@@ -16,6 +57,8 @@
     display: flex;
     flex-direction: column;
     gap: $spacing-sm;
+    flex: 1;
+    overflow-y: auto;
   }
 
   &__card {
@@ -91,3 +134,11 @@
   }
 }
 
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

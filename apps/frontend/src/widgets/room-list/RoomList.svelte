@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount } from 'svelte';
   import { api } from '@/shared/api/endpoints';
   import type { RoomInfo } from '@shared/types/room';
   import { FORMAT_LABELS } from '@shared/constants/index';
@@ -8,7 +8,7 @@
   export let onJoinRoom: (room: RoomInfo) => void;
 
   let rooms: RoomInfo[] = [];
-  let intervalId: ReturnType<typeof setInterval> | null = null;
+  let isRefreshing = false;
 
   const loadRooms = async () => {
     try {
@@ -19,6 +19,14 @@
     }
   };
 
+  const handleRefresh = async () => {
+    isRefreshing = true;
+    await loadRooms();
+    setTimeout(() => {
+      isRefreshing = false;
+    }, 500);
+  };
+
   const handleJoinRoom = (room: RoomInfo) => {
     if (room.playerCount >= 2) return;
     onJoinRoom(room);
@@ -26,13 +34,6 @@
 
   onMount(() => {
     loadRooms();
-    intervalId = setInterval(loadRooms, 3000);
-  });
-
-  onDestroy(() => {
-    if (intervalId) {
-      clearInterval(intervalId);
-    }
   });
 
   $: sortedRooms = [...rooms].sort((a, b) => {
@@ -43,6 +44,19 @@
 </script>
 
 <div class={s['room-list']}>
+  <div class={s['room-list__header']}>
+    <h3 class={s['room-list__title']}>방 목록</h3>
+    <button
+      type="button"
+      class="{s['room-list__refresh']} {isRefreshing ? s['room-list__refresh--spinning'] : ''}"
+      on:click={handleRefresh}
+      disabled={isRefreshing}
+      aria-label="새로고침"
+    >
+      ↻
+    </button>
+  </div>
+
   {#if rooms.length === 0}
     <div class={s['room-list__empty']}>방이 없습니다. 새로운 방을 만들어보세요!</div>
   {:else}

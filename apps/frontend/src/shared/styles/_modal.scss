@@ -11,11 +11,36 @@
 
   &__content {
     @include card;
+    position: relative;
     width: 85%;
     max-width: 600px;
     max-height: 70vh;
     overflow-y: auto;
     border-radius: $border-radius-lg;
+  }
+
+  &__close {
+    @include button-reset;
+    position: absolute;
+    top: $spacing-md;
+    right: $spacing-md;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 24px;
+    line-height: 1;
+    color: $color-gray-light;
+    background: transparent;
+    transition: all $transition-fast;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba($color-white, 0.1);
+      color: $color-white;
+    }
   }
 
   &__title {
@@ -34,6 +59,7 @@
     display: flex;
     gap: $spacing-sm;
     margin-top: $spacing-md;
+    justify-content: center;
   }
 
   &__cancel,

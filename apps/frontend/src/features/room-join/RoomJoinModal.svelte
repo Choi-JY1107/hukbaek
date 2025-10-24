@@ -77,6 +77,7 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
     <div class={s['modal__content']} on:click={(e) => e.stopPropagation()} role="document">
+      <button type="button" class={s['modal__close']} on:click={onClose} aria-label="닫기">×</button>
       <h2 class={s['modal__title']}>방 참가</h2>
       <div class={s['join-room-info']}>
         <div class={s['join-room-info__title']}>방 제목 : {room.title}</div>
@@ -120,14 +121,6 @@
         {/if}
 
         <div class={s['modal__actions']}>
-          <button
-            type="button"
-            class={s['modal__cancel']}
-            on:click={onClose}
-            disabled={isLoading}
-          >
-            취소
-          </button>
           <button
             type="submit"
             class={s['modal__submit']}
