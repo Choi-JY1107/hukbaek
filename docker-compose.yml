@@ -16,8 +16,8 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
-    mem_limit: 256m
-    mem_reservation: 128m
+    mem_limit: 200m
+    mem_reservation: 100m
 
   # Backend (NestJS)
   backend:
@@ -40,8 +40,8 @@ services:
         condition: service_healthy
     command: sh -c "cd /app/packages/shared && pnpm build && cd /app/apps/backend && pnpm dev"
     restart: unless-stopped
-    mem_limit: 256m
-    mem_reservation: 128m
+    mem_limit: 550m
+    mem_reservation: 400m
 
   # Frontend (Svelte + Vite)
   frontend:
@@ -63,8 +63,8 @@ services:
       - backend
     command: sh -c "cd /app/apps/frontend && pnpm dev --host"
     restart: unless-stopped
-    mem_limit: 256m
-    mem_reservation: 128m
+    mem_limit: 300m
+    mem_reservation: 200m
 
 volumes:
   postgres_data:
