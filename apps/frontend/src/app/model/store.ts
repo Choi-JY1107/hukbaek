@@ -1,12 +1,14 @@
-import { create } from 'zustand';
-import { ViewType } from '@/shared/types';
+import { writable } from 'svelte/store';
+import type { ViewType } from '@/shared/types';
 
-type AppStore = {
-  view: ViewType;
-  setView: (view: ViewType) => void;
-};
+function createAppStore() {
+  const { subscribe, set } = writable<ViewType>('lobby');
 
-export const useAppStore = create<AppStore>((set) => ({
-  view: 'lobby',
-  setView: (view) => set({ view }),
-}));
+  return {
+    subscribe,
+    setView: (view: ViewType) => set(view),
+    reset: () => set('lobby'),
+  };
+}
+
+export const appStore = createAppStore();

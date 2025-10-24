@@ -51,6 +51,16 @@
     margin-bottom: $spacing-sm;
     user-select: none;
 
+    // button 기본 스타일 리셋
+    border: none;
+    background: none;
+    padding: 0;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+
     &:hover {
       .game__memo-title {
         color: $color-primary;

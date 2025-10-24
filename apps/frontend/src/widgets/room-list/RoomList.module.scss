@@ -23,7 +23,17 @@
     cursor: pointer;
     transition: transform $transition-fast, box-shadow $transition-fast;
 
-    &:hover:not(&--full) {
+    // button 기본 스타일 리셋
+    border: none;
+    background: none;
+    padding: $spacing-md;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+
+    &:hover:not(&--full):not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
@@ -34,6 +44,10 @@
 
     &--full {
       opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &:disabled {
       cursor: not-allowed;
     }
   }

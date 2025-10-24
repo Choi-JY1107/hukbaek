@@ -1,4 +1,4 @@
-import { Tile, MatchResult } from '../types/game';
+import type { Tile, MatchResult } from '../types/game';
 
 export type WsClientToServer =
   | { t: 'join_room'; roomId: string; playerId: string }

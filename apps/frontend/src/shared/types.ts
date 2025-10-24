@@ -1,4 +1,4 @@
-import { Tile } from '@shared/types/game';
+import type { Tile } from '@shared/types/game';
 
 export type ViewType = 'lobby' | 'room' | 'game';
 

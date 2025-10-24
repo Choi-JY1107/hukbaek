@@ -1,22 +1,22 @@
-import { create } from 'zustand';
-import { GameState } from '@/shared/types';
+import { writable } from 'svelte/store';
+import type { GameState } from '@/shared/types';
 
-type GameStore = {
-  game: GameState | null;
-  setGame: (game: GameState | null) => void;
-  updateGameTurn: (myTurn: boolean, round: number) => void;
-  updateScore: (me: number, opp: number, need: number) => void;
-};
+function createGameStore() {
+  const { subscribe, set, update } = writable<GameState | null>(null);
 
-export const useGameStore = create<GameStore>((set) => ({
-  game: null,
-  setGame: (game) => set({ game }),
-  updateGameTurn: (myTurn, round) =>
-    set((state) => ({
-      game: state.game ? { ...state.game, myTurn, round } : null,
-    })),
-  updateScore: (me, opp, need) =>
-    set((state) => ({
-      game: state.game ? { ...state.game, score: { me, opp, need } } : null,
-    })),
-}));
+  return {
+    subscribe,
+    setGame: (game: GameState | null) => set(game),
+    updateGameTurn: (myTurn: boolean, round: number) =>
+      update((state: GameState | null) =>
+        state ? { ...state, myTurn, round } : null
+      ),
+    updateScore: (me: number, opp: number, need: number) =>
+      update((state: GameState | null) =>
+        state ? { ...state, score: { me, opp, need } } : null
+      ),
+    reset: () => set(null),
+  };
+}
+
+export const gameStore = createGameStore();

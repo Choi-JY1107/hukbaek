@@ -1,12 +1,14 @@
-import { create } from 'zustand';
-import { RoomState } from '@/shared/types';
+import { writable } from 'svelte/store';
+import type { RoomState } from '@/shared/types';
 
-type RoomStore = {
-  room: RoomState | null;
-  setRoom: (room: RoomState | null) => void;
-};
+function createRoomStore() {
+  const { subscribe, set } = writable<RoomState | null>(null);
 
-export const useRoomStore = create<RoomStore>((set) => ({
-  room: null,
-  setRoom: (room) => set({ room }),
-}));
+  return {
+    subscribe,
+    setRoom: (room: RoomState | null) => set(room),
+    reset: () => set(null),
+  };
+}
+
+export const roomStore = createRoomStore();

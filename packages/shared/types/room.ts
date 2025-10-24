@@ -1,4 +1,4 @@
-import { RoomFormat } from './game';
+import type { RoomFormat } from './game';
 
 export type RoomStatus = 'lobby' | 'in_game';
 

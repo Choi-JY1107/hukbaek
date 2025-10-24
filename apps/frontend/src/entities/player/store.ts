@@ -1,21 +1,30 @@
-import { create } from 'zustand';
-import { PlayerState, Tile } from '@/shared/types';
+import { writable } from 'svelte/store';
+import type { PlayerState, Tile } from '@/shared/types';
 
-type PlayerStore = {
+type PlayerStoreState = {
   me: PlayerState | null;
   opponent: PlayerState | null;
-  setMe: (me: PlayerState | null) => void;
-  setOpponent: (opponent: PlayerState | null) => void;
-  updateMyTilesLeft: (tiles: Tile[]) => void;
 };
 
-export const usePlayerStore = create<PlayerStore>((set) => ({
-  me: null,
-  opponent: null,
-  setMe: (me) => set({ me }),
-  setOpponent: (opponent) => set({ opponent }),
-  updateMyTilesLeft: (tiles) =>
-    set((state) => ({
-      me: state.me ? { ...state.me, tilesLeft: tiles } : null,
-    })),
-}));
+function createPlayerStore() {
+  const { subscribe, set, update } = writable<PlayerStoreState>({
+    me: null,
+    opponent: null,
+  });
+
+  return {
+    subscribe,
+    setMe: (me: PlayerState | null) =>
+      update((state: PlayerStoreState) => ({ ...state, me })),
+    setOpponent: (opponent: PlayerState | null) =>
+      update((state: PlayerStoreState) => ({ ...state, opponent })),
+    updateMyTilesLeft: (tiles: Tile[]) =>
+      update((state: PlayerStoreState) => ({
+        ...state,
+        me: state.me ? { ...state.me, tilesLeft: tiles } : null,
+      })),
+    reset: () => set({ me: null, opponent: null }),
+  };
+}
+
+export const playerStore = createPlayerStore();
