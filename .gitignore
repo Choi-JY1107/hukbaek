@@ -11,5 +11,4 @@ coverage
 *.swp
 *.swo
 
-**/*.js
 .claude/
