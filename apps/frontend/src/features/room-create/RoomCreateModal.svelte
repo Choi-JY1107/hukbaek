@@ -14,7 +14,6 @@
     title: '',
     password: '',
     format: 'bo1',
-    overtime: false,
     nickname: '',
   };
   let isLoading = false;
@@ -47,7 +46,6 @@
         title: formData.title,
         locked: !!formData.password,
         format: formData.format,
-        overtime: formData.overtime,
         playerCount: 1,
       });
 
@@ -142,22 +140,6 @@
               </button>
             {/each}
           </div>
-        </div>
-
-        <div class={s['form__group']}>
-          <span class={s['form__label']}>연장 허용</span>
-          <label class={s['toggle-switch']}>
-            <input
-              id="overtime"
-              type="checkbox"
-              bind:checked={formData.overtime}
-              disabled={isLoading}
-            />
-            <span class={s['toggle-switch__slider']}></span>
-            <span class={s['toggle-switch__label']}>
-              {formData.overtime ? '허용' : '비허용'}
-            </span>
-          </label>
         </div>
 
         {#if error}

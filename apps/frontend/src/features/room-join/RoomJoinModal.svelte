@@ -44,7 +44,6 @@
         title: room.title,
         locked: room.locked,
         format: room.format,
-        overtime: room.overtime,
         playerCount: room.playerCount,
       });
 
@@ -84,9 +83,6 @@
         <div class={s['join-room-info__meta']}>
           <span class={s['join-room-info__label']}>승부 수 : </span>
           <span class={s['join-room-info__format']}>{FORMAT_LABELS[room.format]}</span>
-          {#if room.overtime}
-            <span class={s['join-room-info__overtime']}>연장</span>
-          {/if}
         </div>
       </div>
 

@@ -59,11 +59,6 @@
     font-weight: bold;
   }
 
-  &__overtime {
-    color: $color-success;
-    font-weight: bold;
-  }
-
   &__content {
     @include flex-column;
     flex: 1;

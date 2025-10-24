@@ -15,7 +15,6 @@ export class RoomService {
       title: room.title,
       locked: room.locked,
       format: room.format,
-      overtime: room.overtime,
       status: room.status,
       playerCount: room.roomPlayers?.length || 0,
     }));
@@ -27,7 +26,6 @@ export class RoomService {
       locked: !!dto.password,
       passwordHash: dto.password,
       format: dto.format,
-      overtime: dto.overtime,
       status: 'lobby',
     });
 

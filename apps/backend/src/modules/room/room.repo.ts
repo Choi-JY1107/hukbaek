@@ -28,7 +28,6 @@ export class RoomRepository {
     locked: boolean;
     passwordHash?: string;
     format: RoomFormat;
-    overtime: boolean;
     status: RoomStatus;
   }): Promise<Room> {
     const room = this.roomRepo.create(data);

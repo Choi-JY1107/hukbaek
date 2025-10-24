@@ -22,9 +22,6 @@ export class Room {
   format!: RoomFormat;
 
   @Column()
-  overtime!: boolean;
-
-  @Column()
   status!: RoomStatus;
 
   @OneToMany(() => RoomPlayer, (player) => player.room)

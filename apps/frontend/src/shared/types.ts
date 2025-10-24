@@ -14,7 +14,6 @@ export type RoomState = {
   title: string;
   locked: boolean;
   format: 'bo1' | 'bo3' | 'bo5';
-  overtime: boolean;
   playerCount: number;
 };
 

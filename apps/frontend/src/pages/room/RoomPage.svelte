@@ -97,9 +97,6 @@
       <h1 class={s['room__title']}>{room.title}</h1>
       <div class={s['room__info']}>
         <span class={s['room__format']}>{room.format.toUpperCase()}</span>
-        {#if room.overtime}
-          <span class={s['room__overtime']}>연장</span>
-        {/if}
       </div>
     </header>
 
@@ -135,12 +132,6 @@
           </div>
         </div>
       </div>
-
-      {#if players < 2}
-        <div class={s['room__waiting']}>
-          <div class={s['room__waiting-text']}>상대 플레이어를 기다리는 중...</div>
-        </div>
-      {/if}
     </div>
 
     {#if players >= 2}
@@ -150,6 +141,10 @@
       >
         {ready ? '✓ 준비 완료' : '준비하기'}
       </button>
+    {:else}
+      <div class={s['room__waiting']}>
+        <div class={s['room__waiting-text']}>상대 플레이어를 기다리는 중...</div>
+      </div>
     {/if}
   </div>
 {/if}

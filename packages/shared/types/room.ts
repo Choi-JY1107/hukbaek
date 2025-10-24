@@ -7,7 +7,6 @@ export type RoomInfo = {
   title: string;
   locked: boolean;
   format: RoomFormat;
-  overtime: boolean;
   status: RoomStatus;
   playerCount: number;
 };

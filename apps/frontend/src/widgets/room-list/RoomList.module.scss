@@ -19,14 +19,15 @@
   }
 
   &__card {
-    @include card;
+    background: #2a2a2a;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     cursor: pointer;
-    transition: transform $transition-fast, box-shadow $transition-fast;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 
     // button 기본 스타일 리셋
     border: none;
-    background: none;
-    padding: $spacing-md;
     width: 100%;
     text-align: left;
     font-family: inherit;
@@ -82,10 +83,6 @@
   &__format {
     font-weight: bold;
     color: $color-primary;
-  }
-
-  &__overtime {
-    color: $color-success;
   }
 
   &__players {

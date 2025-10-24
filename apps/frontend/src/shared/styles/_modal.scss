@@ -11,8 +11,9 @@
 
   &__content {
     @include card;
-    width: 70%;
-    max-height: 50vh;
+    width: 85%;
+    max-width: 600px;
+    max-height: 70vh;
     overflow-y: auto;
     border-radius: $border-radius-lg;
   }
@@ -256,9 +257,5 @@
   &__format {
     font-weight: bold;
     color: $color-primary;
-  }
-
-  &__overtime {
-    color: $color-success;
   }
 }

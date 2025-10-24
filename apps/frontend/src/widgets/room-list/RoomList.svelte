@@ -65,9 +65,6 @@
           </div>
           <div class={s['room-list__card-info']}>
             <span class={s['room-list__format']}>{FORMAT_LABELS[room.format]}</span>
-            {#if room.overtime}
-              <span class={s['room-list__overtime']}>연장</span>
-            {/if}
             <span class={s['room-list__players']}>{room.playerCount}/2</span>
           </div>
         </button>
