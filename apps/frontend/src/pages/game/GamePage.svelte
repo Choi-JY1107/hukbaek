@@ -3,17 +3,20 @@
   import { roomStore } from '@/entities/room/store';
   import { playerStore } from '@/entities/player/store';
   import { gameStore } from '@/entities/game/store';
+  import { appStore } from '@/app/model/store';
   import GameBoard from '@/widgets/game-board/GameBoard.svelte';
   import GameHistory from '@/widgets/game-history/GameHistory.svelte';
   import TileHand from '@/features/game-play-tile/TileHand.svelte';
+  import GameResultModal from '@/features/game-result/GameResultModal.svelte';
   import { onMessage } from '@/shared/lib/websocket';
-  import type { Tile } from '@/shared/types';
+  import type { Tile, RoomState, GameState, PlayerState } from '@/shared/types';
+  import type { MatchResult } from '@shared/types/game';
   import { FORMAT_LABELS } from '@shared/constants/index';
   import s from './GamePage.module.scss';
 
-  let room: any;
-  let game: any;
-  let player: any;
+  let room: RoomState | null = null;
+  let game: GameState | null = null;
+  let player: { me: PlayerState | null; opponent: PlayerState | null } | null = null;
 
   roomStore.subscribe((value) => (room = value));
   gameStore.subscribe((value) => (game = value));
@@ -29,6 +32,8 @@
   let roundWins = { me: 0, opp: 0 };
   let oppTileMemo: Record<number, 'check' | 'question' | null> = {};
   let isMemoCollapsed = true;
+  let matchResult: MatchResult | null = null;
+  let showResultModal = false;
 
   let unsubGameStart: (() => void) | null = null;
   let unsubTileAck: (() => void) | null = null;
@@ -84,9 +89,8 @@
 
     unsubMatchResult = onMessage('match_result', (data) => {
       setTimeout(() => {
-        alert(
-          `게임 종료! 결과: ${data.result === 'win' ? '승리' : data.result === 'lose' ? '패배' : '무승부'}`
-        );
+        matchResult = data.result;
+        showResultModal = true;
       }, 500);
     });
   });
@@ -117,6 +121,12 @@
       ...oppTileMemo,
       [tile]: next,
     };
+  };
+
+  const handleCloseResultModal = () => {
+    showResultModal = false;
+    matchResult = null;
+    appStore.setView('lobby');
   };
 </script>
 
@@ -181,4 +191,10 @@
 
     <TileHand myPlayedTile={myPlayedTile} onPlayTile={(tile) => (myPlayedTile = tile)} />
   </div>
+
+  <GameResultModal
+    isOpen={showResultModal}
+    result={matchResult}
+    onClose={handleCloseResultModal}
+  />
 {/if}

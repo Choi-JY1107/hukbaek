@@ -4,10 +4,11 @@ export type WsClientToServer =
   | { t: 'join_room'; roomId: string; playerId: string }
   | { t: 'set_ready'; roomId: string; ready: boolean }
   | { t: 'play_tile'; roomId: string; tile: Tile }
-  | { t: 'request_state'; roomId: string };
+  | { t: 'request_state'; roomId: string }
+  | { t: 'leave_game'; roomId: string };
 
 export type WsServerToClient =
-  | { t: 'room_updated'; players: number; readyStates: [boolean, boolean]; playerNames?: [string, string] }
+  | { t: 'room_updated'; playerCount: number; otherPlayer?: { name: string; readyState: boolean } }
   | { t: 'game_start'; starterId: string; myTiles: Tile[] }
   | { t: 'turn_info'; yourTurn: boolean; round: number; starterId: string }
   | { t: 'tile_ack'; accepted: boolean; reason?: string }

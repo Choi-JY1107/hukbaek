@@ -1,0 +1,109 @@
+@use 'sass:color';
+@use '../../shared/styles/variables' as *;
+@use '../../shared/styles/mixins' as *;
+
+.modal {
+  @include flex-center;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: $z-modal;
+  animation: fadeIn 0.3s ease;
+
+  &__content {
+    @include card;
+    width: 90%;
+    max-width: 500px;
+    border-radius: $border-radius-lg;
+    padding: $spacing-xl;
+    animation: scaleIn 0.3s ease;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: center;
+    margin-top: $spacing-lg;
+  }
+
+  &__button {
+    @include button-reset;
+    padding: $spacing-md $spacing-xl;
+    background: $color-primary;
+    color: $color-white;
+    border-radius: $border-radius-md;
+    font-weight: bold;
+    font-size: $font-size-base;
+    transition: all $transition-base;
+
+    &:hover {
+      background: color.scale($color-primary, $lightness: -17%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba($color-primary, 0.4);
+    }
+  }
+}
+
+.result {
+  @include flex-column;
+  @include flex-center;
+  gap: $spacing-md;
+  padding: $spacing-lg 0;
+
+  &__icon {
+    font-size: 5rem;
+    line-height: 1;
+    animation: bounce 0.6s ease;
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: bold;
+    color: $color-white;
+  }
+
+  &__text {
+    font-size: $font-size-lg;
+    font-weight: bold;
+  }
+
+  &--win &__text {
+    color: $color-success;
+  }
+
+  &--lose &__text {
+    color: $color-danger;
+  }
+
+  &--draw &__text {
+    color: $color-gray-light;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}

@@ -105,27 +105,43 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     await this.broadcastGameState(msg.roomId);
   }
 
+  @SubscribeMessage('leave_game')
+  async handleLeaveGame(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() msg: Extract<WsClientToServer, { t: 'leave_game' }>,
+  ) {
+    const player = await this.roomRepo.findPlayerBySocketId(client.id);
+    if (!player) return;
+
+    const roomId = await this.roomService.leaveRoom(player.id);
+    if (roomId) {
+      // 상대방에게 플레이어가 나갔음을 알림
+      this.server.to(roomId).emit('player_left', { playerId: player.id });
+      await this.broadcastRoomState(roomId);
+    }
+  }
+
   private async broadcastRoomState(roomId: string) {
     const room = await this.roomRepo.findById(roomId);
     if (!room) return;
 
-    const readyStates: [boolean, boolean] = [
-      room.roomPlayers[0]?.ready || false,
-      room.roomPlayers[1]?.ready || false,
-    ];
+    // 각 플레이어에게 개별적으로 메시지 전송
+    for (const player of room.roomPlayers) {
+      if (!player.socketId) continue;
 
-    const playerNames: [string, string] | undefined = room.roomPlayers.length === 2
-      ? [room.roomPlayers[0].nickname, room.roomPlayers[1].nickname]
-      : undefined;
+      // 상대방 찾기
+      const otherPlayer = room.roomPlayers.find(p => p.id !== player.id);
 
-    const msg: WsServerToClient = {
-      t: 'room_updated',
-      players: room.roomPlayers.length,
-      readyStates,
-      playerNames,
-    };
+      const msg: WsServerToClient = {
+        t: 'room_updated',
+        playerCount: room.roomPlayers.length,
+        otherPlayer: otherPlayer
+          ? { name: otherPlayer.nickname, readyState: otherPlayer.ready }
+          : undefined,
+      };
 
-    this.server.to(roomId).emit('message', msg);
+      this.server.to(player.socketId).emit('message', msg);
+    }
   }
 
   private async broadcastGameState(roomId: string) {

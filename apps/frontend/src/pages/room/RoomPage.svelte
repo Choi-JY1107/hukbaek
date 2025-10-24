@@ -12,17 +12,14 @@
   let room: any;
   let player: any;
   let ready = false;
-  let players = 1;
-  let readyStates: [boolean, boolean] = [false, false];
-  let isHost = true;
+  let playerCount = 1;
+  let oppReady = false;
 
   roomStore.subscribe((value) => (room = value));
   playerStore.subscribe((value) => (player = value));
 
   $: me = player?.me;
   $: opponent = player?.opponent;
-  $: oppReady = isHost ? readyStates[1] : readyStates[0];
-  $: myReady = isHost ? readyStates[0] : readyStates[1];
 
   let unsubGameStart: (() => void) | null = null;
   let unsubRoomUpdated: (() => void) | null = null;
@@ -34,22 +31,16 @@
 
     unsubRoomUpdated = onMessage('room_updated', (data) => {
       console.log('🔔 [room_updated]', data);
-      console.log('🔔 내 닉네임:', me?.nickname);
-      players = data.players;
-      readyStates = data.readyStates;
+      playerCount = data.playerCount;
 
-      if (data.playerNames && me && data.playerNames.length === 2) {
-        console.log('🔔 playerNames:', data.playerNames);
-        const oppName = data.playerNames.find((name: string) => name !== me.nickname);
-        console.log('🔔 상대 닉네임:', oppName);
-        if (oppName) {
-          playerStore.setOpponent({
-            id: '',
-            nickname: oppName,
-            ready: false,
-            tilesLeft: [],
-          });
-        }
+      if (data.otherPlayer) {
+        oppReady = data.otherPlayer.readyState;
+        playerStore.setOpponent({
+          id: '',
+          nickname: data.otherPlayer.name,
+          ready: data.otherPlayer.readyState,
+          tilesLeft: [],
+        });
       }
     });
 
@@ -74,7 +65,7 @@
   });
 
   const handleReady = () => {
-    if (!room || players < 2) return;
+    if (!room || playerCount < 2) return;
     const newReady = !ready;
     ready = newReady;
     sendMessage({ t: 'set_ready', roomId: room.id, ready: newReady });
@@ -102,15 +93,15 @@
 
     <div class={s['room__content']}>
       <div class={s['room__opponent']}>
-        <div class="{s['room__player']} {players >= 2 ? s['room__player--filled'] : ''}">
+        <div class="{s['room__player']} {playerCount >= 2 ? s['room__player--filled'] : ''}">
           <div class={s['room__player-icon']}>
-            {players >= 2 ? '👤' : '💺'}
+            {playerCount >= 2 ? '👤' : '💺'}
           </div>
           <div class={s['room__player-info']}>
             <div class={s['room__player-label']}>
               상대 {opponent?.nickname ? `(${opponent.nickname})` : ''}
             </div>
-            {#if players >= 2}
+            {#if playerCount >= 2}
               <div class="{s['room__player-status']} {oppReady ? s['room__player-status--ready'] : ''}">
                 {oppReady ? '✓ 준비 완료' : '대기 중'}
               </div>
@@ -126,15 +117,15 @@
           <div class={s['room__player-icon']}>👤</div>
           <div class={s['room__player-info']}>
             <div class={s['room__player-label']}>나 ({me?.nickname || '플레이어'})</div>
-            <div class="{s['room__player-status']} {myReady ? s['room__player-status--ready'] : ''}">
-              {myReady ? '✓ 준비 완료' : '대기 중'}
+            <div class="{s['room__player-status']} {ready ? s['room__player-status--ready'] : ''}">
+              {ready ? '✓ 준비 완료' : '대기 중'}
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    {#if players >= 2}
+    {#if playerCount >= 2}
       <button
         class="{s['room__ready-btn']} {ready ? s['room__ready-btn--ready'] : ''}"
         on:click={handleReady}
