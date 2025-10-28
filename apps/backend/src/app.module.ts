@@ -14,6 +14,7 @@ import { GameModule } from './modules/game/game.module';
       database: process.env.DATABASE_NAME || 'black_and_white',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
+      ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
     }),
     RoomModule,
     GameModule,
