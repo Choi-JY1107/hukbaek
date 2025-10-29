@@ -172,7 +172,7 @@ docker-compose down -v
 ## 📂 프로젝트 구조
 
 ```
-black-and-white/
+hukbaek/
 ├── apps/
 │   ├── frontend/          # Svelte 프론트엔드 (FSD 구조)
 │   │   └── src/
