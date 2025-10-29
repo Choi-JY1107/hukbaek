@@ -3,6 +3,7 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 import path from 'path';
 
 export default defineConfig({
+  base: process.env.VITE_BASE_URL || '/',
   plugins: [svelte()],
   resolve: {
     alias: {

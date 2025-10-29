@@ -1,4 +1,4 @@
-name: Deploy Frontend
+name: Deploy Frontend to GitHub Pages
 
 on:
   push:
@@ -8,6 +8,17 @@ on:
       - 'apps/frontend/**'
       - 'packages/shared/**'
       - '.github/workflows/deploy-frontend.yml'
+
+# GitHub Pages 배포 권한 설정
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 동시 배포 방지
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
@@ -33,13 +44,21 @@ jobs:
 
       - name: Build frontend
         run: cd apps/frontend && pnpm build
+        env:
+          # GitHub Pages용 base path 설정
+          VITE_BASE_URL: /black-and-white/
+          # 백엔드 API 엔드포인트 (Repository Secrets에서 설정)
+          VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
+          VITE_WS_URL: ${{ secrets.VITE_WS_URL }}
 
-      - name: Deploy to server
-        uses: easingthemes/ssh-deploy@v5
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          SOURCE: "apps/frontend/dist/"
-          TARGET: ${{ secrets.DEPLOY_PATH }}
-          EXCLUDE: "/node_modules/"
+          path: 'apps/frontend/dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
