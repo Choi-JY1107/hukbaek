@@ -8,6 +8,7 @@ on:
       - 'apps/frontend/**'
       - 'packages/shared/**'
       - '.github/workflows/deploy-frontend.yml'
+  workflow_dispatch:  # 수동 실행 트리거 추가
 
 # GitHub Pages 배포 권한 설정
 permissions:
