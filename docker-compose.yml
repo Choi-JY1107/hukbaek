@@ -1,49 +1,17 @@
-
 services:
-  # Backend (NestJS) - Neon DB 사용으로 로컬 DB 제거
+  # Backend (NestJS) - Production
   backend:
     build:
       context: .
-      dockerfile: apps/backend/Dockerfile.dev
+      dockerfile: apps/backend/Dockerfile
     container_name: hukbaek-backend
     env_file:
       - .env
     ports:
       - "4000:4000"
-    volumes:
-      - ./apps/backend:/app/apps/backend
-      - ./packages/shared:/app/packages/shared
-      - /app/node_modules
-      - /app/apps/backend/node_modules
-      - /app/packages/shared/node_modules
-    command: sh -c "cd /app/packages/shared && pnpm build && cd /app/apps/backend && pnpm dev"
     restart: unless-stopped
-    mem_limit: 600m
-    mem_reservation: 450m
+    mem_limit: 900m
+    mem_reservation: 750m
     environment:
-      - NODE_OPTIONS=--max-old-space-size=512
-
-  # Frontend (Svelte + Vite)
-  frontend:
-    build:
-      context: .
-      dockerfile: apps/frontend/Dockerfile.dev
-    container_name: hukbaek-frontend
-    env_file:
-      - .env
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./apps/frontend:/app/apps/frontend
-      - ./packages/shared:/app/packages/shared
-      - /app/node_modules
-      - /app/apps/frontend/node_modules
-      - /app/packages/shared/node_modules
-    depends_on:
-      - backend
-    command: sh -c "cd /app/apps/frontend && pnpm dev --host"
-    restart: unless-stopped
-    mem_limit: 350m
-    mem_reservation: 250m
-    environment:
-      - NODE_OPTIONS=--max-old-space-size=300
+      - NODE_ENV=production
+      - NODE_OPTIONS=--max-old-space-size=800
